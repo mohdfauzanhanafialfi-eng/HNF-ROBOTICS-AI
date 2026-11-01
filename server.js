@@ -7,7 +7,11 @@ import { fileURLToPath } from "node:url";
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.json({ limit: "20kb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 app.use("/api/", rateLimit({ windowMs: 60_000, limit: 20, standardHeaders: true, legacyHeaders: false }));
 
 app.post("/api/chat", async (req, res) => {
