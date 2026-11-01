@@ -31,7 +31,12 @@ input,textarea{width:100%;background:#071827;color:white;border:1px solid var(--
 <script>
 const robots=[['Robot Humanoid','🤖','Robot layanan dan interaksi manusia-robot.'],['Robot Pertanian','🌱','Robot konsep untuk pemantauan dan dukungan pekerjaan pertanian.'],['Robot Pembersih','🧹','Robot konsep untuk membantu kebersihan area.'],['Robot Kurir','📦','Robot konsep untuk pengiriman barang.'],['Drone AI','🛸','Drone konsep untuk pemantauan dan pengumpulan data.'],['Robot Industri','🦾','Robot konsep untuk otomasi proses industri.']];
 function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));scrollTo(0,0)}
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.page));
+document.querySelectorAll('nav button').forEach(button => {
+  button.addEventListener('click', function () {
+    const page = this.getAttribute('data-page');
+    show(page);
+  });
+});
 document.getElementById('productsGrid').innerHTML=robots.map((r,i)=>`<div class="card" onclick="detail(${i})"><div class="robot">${r[1]}</div><h3>${r[0]}</h3><p class="muted">${r[2]}</p><span class="tag">Lihat detail</span></div>`).join('');
 function detail(i){let r=robots[i];document.getElementById('detail').innerHTML=`<h2>${r[1]} ${r[0]}</h2><p class="muted">${r[2]}</p><p>Detail teknis, foto prototipe, dan spesifikasi final akan ditambahkan berdasarkan desain robot HNF yang telah disetujui.</p>`}
 async function askAI(){let q=document.getElementById('question'),v=q.value.trim();if(!v)return;let chat=document.getElementById('chat'),status=document.getElementById('aiStatus');chat.textContent+='\\nAnda: '+v;q.value='';status.textContent='Menghubungi server AI...';try{let r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:v})});let d=await r.json();if(!r.ok)throw new Error(d.error||'Server AI belum siap');chat.textContent+='\\nHNF AI: '+d.reply;status.textContent='Status: tersambung ke AI online.'}catch(e){chat.textContent+='\\nHNF AI: AI online belum tersambung. Pastikan backend sudah dijalankan dan API key disetel.';status.textContent='Status: '+e.message}chat.scrollTop=chat.scrollHeight}
